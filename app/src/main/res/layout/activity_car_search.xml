@@ -1,26 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/primary_background"
     tools:context=".CarSearch">
 
+    <!-- Title -->
     <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Car Search"
+        android:text="Car Buying Assistant"
         android:textSize="24sp"
-        android:layout_marginBottom="16dp"/>
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp" />
 
-    <!-- You can add EditText fields here for search criteria -->
+    <!-- Car Graphic -->
+    <ImageView
+        android:id="@+id/carGraphic"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/titleText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/logo"
+        android:contentDescription="Car Search Icon" />
 
-    <Button
-        android:id="@+id/search_button"
+    <!-- Location -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/locationCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/carGraphic"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp">
+
+<!--        <EditText-->
+<!--            android:id="@+id/locationInput"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Current Location – Ames, IA\nTap here to change search location"-->
+<!--            android:background="@color/secondary_background"-->
+<!--            android:padding="16dp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="16sp" />-->
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/autocomplete_fragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Keyword Prompt -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/keywordCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/locationCard"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp">
+
+        <EditText
+            android:id="@+id/keywordInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="What kind of car are you looking for? \nEnter keywords here to filter your search."
+            android:background="@android:color/transparent"
+            android:padding="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Search Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search for Cars" />
+        android:layout_below="@id/keywordCard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="Search"
+        android:textSize="18sp"
+        app:backgroundTint="@color/dark_blue_accent"
+        app:cornerRadius="24dp" />
 
-</LinearLayout>
+</RelativeLayout>
