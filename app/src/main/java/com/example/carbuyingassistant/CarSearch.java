@@ -62,57 +62,57 @@ public class CarSearch extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_search);
 
-        if (!Places.isInitialized()) {
-            String apiKey = null;
-            try {
-                apiKey = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getString("com.google.android.geo.API_KEY");
-            } catch (PackageManager.NameNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            assert apiKey != null;
-            Places.initialize(getApplicationContext(), apiKey);
-        }
-        PlacesClient placesClient = Places.createClient(this);
-
+//        if (!Places.isInitialized()) {
+//            String apiKey = null;
+//            try {
+//                apiKey = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getString("com.google.android.geo.API_KEY");
+//            } catch (PackageManager.NameNotFoundException e) {
+//                throw new RuntimeException(e);
+//            }
+//            assert apiKey != null;
+//            Places.initialize(getApplicationContext(), apiKey);
+//        }
+//        PlacesClient placesClient = Places.createClient(this);
+//
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+//
         autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
-        // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS));
-
-        // Filter for cities
-        autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
-
-        // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull Place place) {
-                // Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-
-                // Extract city name for display or use
-                if (place.getAddressComponents() != null) {
-                    for (com.google.android.libraries.places.api.model.AddressComponent component : place.getAddressComponents().asList()) {
-                        if (component.getTypes().contains("locality")) {
-                            currentSelectedCity = component.getName();
-                            break;
-                        }
-                    }
-                }
-                if (currentSelectedCity == null) currentSelectedCity = place.getName();
-
-                Toast.makeText(CarSearch.this, "Location set to: " + currentSelectedCity, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(@NonNull Status status) {
-                // Handle the error.
-                Log.e(TAG, "An error occurred: " + status);
-                Toast.makeText(CarSearch.this, "Error selecting place.", Toast.LENGTH_SHORT).show();
-            }
-        });
+//
+//        // Specify the types of place data to return.
+//        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS));
+//
+//        // Filter for cities
+//        autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
+//
+//        // Set up a PlaceSelectionListener to handle the response.
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(@NonNull Place place) {
+//                // Get info about the selected place.
+//                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+//
+//                // Extract city name for display or use
+//                if (place.getAddressComponents() != null) {
+//                    for (com.google.android.libraries.places.api.model.AddressComponent component : place.getAddressComponents().asList()) {
+//                        if (component.getTypes().contains("locality")) {
+//                            currentSelectedCity = component.getName();
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (currentSelectedCity == null) currentSelectedCity = place.getName();
+//
+//                Toast.makeText(CarSearch.this, "Location set to: " + currentSelectedCity, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onError(@NonNull Status status) {
+//                // Handle the error.
+//                Log.e(TAG, "An error occurred: " + status);
+//                Toast.makeText(CarSearch.this, "Error selecting place.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         checkLocationPermission();
 
