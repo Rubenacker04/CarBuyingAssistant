@@ -8,176 +8,196 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 public class CarSearch extends AppCompatActivity {
 
     private static final String TAG = "CarSearchActivity";
-    private FusedLocationProviderClient fusedLocationClient;
-    private AutocompleteSupportFragment autocompleteFragment;
-    private String currentSelectedCity = null;
 
+    // --- UI Elements ---
+    private EditText locationInput;
+    private EditText keywordInput;
+    private TextView locationLabel; // This will be our status display
+
+    // --- Services ---
+    private FusedLocationProviderClient fusedLocationClient;
+    private Geocoder geocoder;
+
+    // --- State ---
+    private Location selectedLocation;
+
+    // ActivityResultLauncher for handling the location permission request.
     private final ActivityResultLauncher<String> requestPermissionLauncher =
-        registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your app.
-                Toast.makeText(this, "Location permission granted!", Toast.LENGTH_SHORT).show();
-                getDeviceLocation();
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // feature requires a permission that the user has denied.
-                Toast.makeText(this, "Location permission denied. Feature is unavailable.", Toast.LENGTH_LONG).show();
-            }
-        });
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(this, "Location permission granted!", Toast.LENGTH_SHORT).show();
+                    // Try getting location again after permission is granted
+                    useCurrentLocation();
+                } else {
+                    Toast.makeText(this, "Permission denied. Location feature is unavailable.", Toast.LENGTH_LONG).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_search);
 
-//        if (!Places.isInitialized()) {
-//            String apiKey = null;
-//            try {
-//                apiKey = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getString("com.google.android.geo.API_KEY");
-//            } catch (PackageManager.NameNotFoundException e) {
-//                throw new RuntimeException(e);
-//            }
-//            assert apiKey != null;
-//            Places.initialize(getApplicationContext(), apiKey);
-//        }
-//        PlacesClient placesClient = Places.createClient(this);
-//
+        // --- Initialize UI and Services ---
+        locationInput = findViewById(R.id.location_input);
+        keywordInput = findViewById(R.id.keywordInput);
+        locationLabel = findViewById(R.id.location_label); // Find the label
+        Button manualSearchButton = findViewById(R.id.manual_search_button);
+        Button currentLocationButton = findViewById(R.id.current_location_button);
+        Button findCarsButton = findViewById(R.id.searchButton);
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-//
-        autocompleteFragment = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-//
-//        // Specify the types of place data to return.
-//        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS_COMPONENTS));
-//
-//        // Filter for cities
-//        autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
-//
-//        // Set up a PlaceSelectionListener to handle the response.
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(@NonNull Place place) {
-//                // Get info about the selected place.
-//                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-//
-//                // Extract city name for display or use
-//                if (place.getAddressComponents() != null) {
-//                    for (com.google.android.libraries.places.api.model.AddressComponent component : place.getAddressComponents().asList()) {
-//                        if (component.getTypes().contains("locality")) {
-//                            currentSelectedCity = component.getName();
-//                            break;
-//                        }
-//                    }
-//                }
-//                if (currentSelectedCity == null) currentSelectedCity = place.getName();
-//
-//                Toast.makeText(CarSearch.this, "Location set to: " + currentSelectedCity, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onError(@NonNull Status status) {
-//                // Handle the error.
-//                Log.e(TAG, "An error occurred: " + status);
-//                Toast.makeText(CarSearch.this, "Error selecting place.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        geocoder = new Geocoder(this, Locale.getDefault());
 
-        checkLocationPermission();
-
-        Button searchButton = findViewById(R.id.searchButton);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // When the search button is clicked, open the CarList activity
-                Intent intent = new Intent(CarSearch.this, CarList.class);
-                startActivity(intent);
-            }
-        });
+        // --- Set Click Listeners ---
+        manualSearchButton.setOnClickListener(v -> handleManualSearch());
+        currentLocationButton.setOnClickListener(v -> checkLocationPermissionAndGetLocation());
+        findCarsButton.setOnClickListener(v -> startCarListActivity());
     }
 
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // You can use the API that requires the permission.
-            getDeviceLocation();
+    /**
+     * Updates the location_label TextView to show the currently set location.
+     * @param locationName The name of the location to display. If null, resets the label.
+     */
+    private void updateLocationLabel(String locationName) {
+        if (locationName != null && !locationName.isEmpty()) {
+            locationLabel.setText("Current Location: " + locationName);
         } else {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
+            // Reset to default text if location is cleared or invalid
+            locationLabel.setText("Current Location: unknown");
+        }
+    }
+
+    /**
+     * Handles the click of the "Set Location" button.
+     */
+    private void handleManualSearch() {
+        String addressString = locationInput.getText().toString();
+        if (addressString.isEmpty()) {
+            Toast.makeText(this, "Please enter a location to search.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(addressString, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                selectedLocation = new Location("geocoder");
+                selectedLocation.setLatitude(address.getLatitude());
+                selectedLocation.setLongitude(address.getLongitude());
+
+                // Use a simple format like "City, State" for the label
+                String city = address.getLocality();
+                String state = address.getAdminArea();
+                String displayLocation = (city != null && state != null) ? city + ", " + state : address.getAddressLine(0);
+
+                updateLocationLabel(displayLocation); // Update the label with the found location
+                locationInput.setText(""); // Clear the input box after successful search
+                locationInput.setHint("Location set to: " + displayLocation); // Set a helpful hint
+                Log.i(TAG, "Location found via geocoder: " + displayLocation);
+
+                Toast.makeText(this, "Location set to: " + displayLocation, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Could not find location. Please try a different search.", Toast.LENGTH_LONG).show();
+                selectedLocation = null; // Clear location if search fails
+                updateLocationLabel(null); // Reset the label
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Geocoder service not available or failed.", e);
+            Toast.makeText(this, "Network error. Unable to verify location.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Checks for permission before getting the device's location.
+     */
+    private void checkLocationPermissionAndGetLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            useCurrentLocation();
+        } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
     }
 
-    private void getDeviceLocation() {
-        // Double-check permission before accessing location (best practice)
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // This should not happen if checkLocationPermission() is called first, but it's a good safeguard.
-            return;
-        }
-
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
+    /**
+     * Gets the last known location and updates the UI.
+     */
+    private void useCurrentLocation() {
+        try {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
                         if (location != null) {
-                            // Logic to handle location object
-                            updateLocationUI(location);
+                            selectedLocation = location;
+                            getAddressFromLocation(location); // This will update the label
                         } else {
-                            Toast.makeText(CarSearch.this, "Could not retrieve location.", Toast.LENGTH_SHORT).show();
+                            Log.w(TAG, "FusedLocationProvider returned a null location.");
+                            Toast.makeText(this, "Could not retrieve current location. Please ensure location is enabled.", Toast.LENGTH_LONG).show();
                         }
-                    }
-                });
+                    })
+                    .addOnFailureListener(this, e -> Log.e(TAG, "Error getting location", e));
+        } catch (SecurityException e) {
+            Log.e(TAG, "Location permission check failed unexpectedly.", e);
+        }
     }
 
-    private void updateLocationUI(Location location) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+    /**
+     * Uses Geocoder to get an address from a Location object and update the label.
+     */
+    private void getAddressFromLocation(Location location) {
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
-                String city = address.getLocality(); // City
-                String state = address.getAdminArea(); // State
+                String city = address.getLocality();
+                String state = address.getAdminArea();
+                String displayLocation = (city != null && state != null) ? city + ", " + state : address.getAddressLine(0);
 
-                if (city != null && state != null) {
-                    currentSelectedCity = city;
-                    String displayLocation = city + ", " + state;
-                    // Set the initial text in the autocomplete field
-                    autocompleteFragment.setText(displayLocation);
-                }
+                updateLocationLabel(displayLocation); // Update the label with the current location
+                locationInput.setText(""); // Also clear the input box
+                locationInput.setHint("Using your current location");
+
+                Toast.makeText(this, "Location set to: " + displayLocation, Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
-            Log.e(TAG, "Geocoder error", e);
+            Log.e(TAG, "Geocoder service not available.", e);
+            Toast.makeText(this, "Could not determine address from location.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Starts the CarList activity.
+     */
+    private void startCarListActivity() {
+        if (selectedLocation == null) {
+            Toast.makeText(this, "Please set a location first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String keywords = keywordInput.getText().toString();
+        Intent intent = new Intent(this, CarList.class);
+        intent.putExtra("EXTRA_LATITUDE", selectedLocation.getLatitude());
+        intent.putExtra("EXTRA_LONGITUDE", selectedLocation.getLongitude());
+        intent.putExtra("EXTRA_KEYWORDS", keywords);
+        startActivity(intent);
     }
 }

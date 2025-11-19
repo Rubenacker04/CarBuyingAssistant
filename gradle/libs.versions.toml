@@ -24,5 +24,4 @@ databinding-compiler-common = { group = "androidx.databinding", name = "databind
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
-
+android-libraries-mapsplatform-secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }

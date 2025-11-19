@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/primary_background"
+    android:padding="16dp"
     tools:context=".CarSearch">
 
     <!-- Title -->
@@ -13,68 +14,110 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Car Buying Assistant"
+        android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#000000"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Car Graphic -->
     <ImageView
         android:id="@+id/carGraphic"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_below="@id/titleText"
-        android:layout_centerHorizontal="true"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginTop="16dp"
+        android:contentDescription="Car Search Icon"
         android:src="@drawable/logo"
-        android:contentDescription="Car Search Icon" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleText" />
 
-    <!-- Location -->
+    <!-- CardView for the location section -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/locationCard"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/carGraphic"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/white"
-        app:strokeWidth="1dp">
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carGraphic">
 
-<!--        <EditText-->
-<!--            android:id="@+id/locationInput"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Current Location – Ames, IA\nTap here to change search location"-->
-<!--            android:background="@color/secondary_background"-->
-<!--            android:padding="16dp"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:textSize="16sp" />-->
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/autocomplete_fragment"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp" />
+            android:padding="16dp">
+
+            <!-- Location Label -->
+            <TextView
+                android:id="@+id/location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Current Location: unknown"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Location Input EditText -->
+            <EditText
+                android:id="@+id/location_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Search by location"
+                android:inputType="textPostalAddress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/location_label" />
+
+            <!-- Set Location Button -->
+            <Button
+                android:id="@+id/manual_search_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:text="Set Location"
+                app:backgroundTint="@color/dark_blue_accent"
+                app:layout_constraintEnd_toStartOf="@id/current_location_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/location_input" />
+
+            <!-- Use Current Location Button -->
+            <Button
+                android:id="@+id/current_location_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Use My Location"
+                android:textColor="@color/dark_blue_accent"
+                app:strokeColor="@color/dark_blue_accent"
+                app:strokeWidth="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/manual_search_button"
+                app:layout_constraintTop_toTopOf="@id/manual_search_button" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Keyword Prompt -->
+    <!-- Keyword Card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/keywordCard"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/locationCard"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginTop="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationCard"
         app:strokeColor="@color/black"
         app:strokeWidth="2dp">
 
@@ -82,30 +125,31 @@
             android:id="@+id/keywordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="What kind of car are you looking for? \nEnter keywords here to filter your search."
             android:background="@android:color/transparent"
+            android:gravity="top"
+            android:hint="What kind of car are you looking for?&#10;Enter keywords here..."
+            android:inputType="textMultiLine"
+            android:minLines="3"
             android:padding="16dp"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
-
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Search Button -->
+    <!-- Final Search Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/searchButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/keywordCard"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:paddingLeft="32dp"
-        android:paddingRight="32dp"
+        android:layout_marginTop="16dp"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
-        android:text="Search"
+        android:text="Find Cars"
         android:textSize="18sp"
         app:backgroundTint="@color/dark_blue_accent"
-        app:cornerRadius="24dp" />
+        app:cornerRadius="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/keywordCard" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
