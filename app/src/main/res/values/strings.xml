@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CarBuyingAssistant</string>
+    <string name="market_report_text">Market Report</string>
+    <string name="seller_site_text">Seller Site</string>
 </resources>

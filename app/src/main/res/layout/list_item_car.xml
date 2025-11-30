@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <!-- Need to fix images so they have no background -->
+    <ImageView
+        android:id="@+id/car_image"
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="3dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/seller_site_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@android:drawable/ic_dialog_map" />
+
+    <TextView
+        android:id="@+id/car_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2016 Ford Focus – 14 mi away" />
+
+    <TextView
+        android:id="@+id/car_distance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/car_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/car_title"
+        tools:text="14 mi away" />
+
+    <TextView
+        android:id="@+id/car_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car_distance"
+        tools:text="62,500 Miles Driven, 34/27 MPG" />
+
+    <!-- Barrier between buttons and text -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/details_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="car_title,car_details" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/market_report_button"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/market_report_text"
+        android:textSize="14sp"
+        app:backgroundTint="@color/dark_blue_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_barrier" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/seller_site_button"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/seller_site_text"
+        android:textSize="14sp"
+        app:backgroundTint="@color/dark_blue_accent"
+        app:layout_constraintBottom_toBottomOf="@id/market_report_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/market_report_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
