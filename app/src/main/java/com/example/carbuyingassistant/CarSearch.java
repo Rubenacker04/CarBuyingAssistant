@@ -32,6 +32,7 @@ public class CarSearch extends AppCompatActivity {
     // --- UI Elements ---
     private EditText locationInput;
     private EditText keywordInput;
+    private EditText budgetInput;
     private TextView locationLabel; // This will be our status display
 
     // --- Services ---
@@ -61,6 +62,7 @@ public class CarSearch extends AppCompatActivity {
         // --- Initialize UI and Services ---
         locationInput = findViewById(R.id.location_input);
         keywordInput = findViewById(R.id.keywordInput);
+        budgetInput = findViewById(R.id.budgetInput);
         locationLabel = findViewById(R.id.location_label); // Find the label
         Button manualSearchButton = findViewById(R.id.manual_search_button);
         Button currentLocationButton = findViewById(R.id.current_location_button);
@@ -193,11 +195,18 @@ public class CarSearch extends AppCompatActivity {
             return;
         }
 
+        String budgetString = budgetInput.getText().toString();
+        if (budgetString.isEmpty()) {
+            Toast.makeText(this, "Please enter a budget.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String keywords = keywordInput.getText().toString();
         Intent intent = new Intent(this, CarList.class);
         intent.putExtra("EXTRA_LATITUDE", selectedLocation.getLatitude());
         intent.putExtra("EXTRA_LONGITUDE", selectedLocation.getLongitude());
         intent.putExtra("EXTRA_KEYWORDS", keywords);
+        intent.putExtra("EXTRA_BUDGET", budgetString);
         startActivity(intent);
     }
 }

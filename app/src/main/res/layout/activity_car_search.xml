@@ -107,9 +107,9 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Keyword Card -->
+    <!-- Budget Card -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/keywordCard"
+        android:id="@+id/budgetCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -122,12 +122,39 @@
         app:strokeWidth="2dp">
 
         <EditText
+            android:id="@+id/budgetInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="Enter your max budget"
+            android:inputType="number"
+            android:padding="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Keyword Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/keywordCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/budgetCard"
+        app:strokeColor="@color/black"
+        app:strokeWidth="2dp">
+
+        <EditText
             android:id="@+id/keywordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:gravity="top"
-            android:hint="What kind of car are you looking for?&#10;Enter keywords here..."
+            android:hint="What kind of car are you looking for?\nEnter keywords here..."
             android:inputType="textMultiLine"
             android:minLines="3"
             android:padding="16dp"
@@ -143,7 +170,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:paddingTop="12dp"
-        android:paddingBottom="12dp"
+        android転paddingBottom="12dp"
         android:text="Find Cars"
         android:textSize="18sp"
         app:backgroundTint="@color/dark_blue_accent"
