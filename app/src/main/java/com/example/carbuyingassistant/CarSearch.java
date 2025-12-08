@@ -25,21 +25,26 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This activity allows users to search for cars based on location, keywords, and budget.
+ *
+ * @author Beau Smith
+ */
 public class CarSearch extends AppCompatActivity {
 
     private static final String TAG = "CarSearchActivity";
 
-    // --- UI Elements ---
+    // UI Elements
     private EditText locationInput;
     private EditText keywordInput;
     private EditText budgetInput;
-    private TextView locationLabel; // This will be our status display
+    private TextView locationLabel; // status display
 
-    // --- Services ---
+    // Services
     private FusedLocationProviderClient fusedLocationClient;
     private Geocoder geocoder;
 
-    // --- State ---
+    // State
     private Location selectedLocation;
 
     // ActivityResultLauncher for handling the location permission request.
@@ -54,12 +59,16 @@ public class CarSearch extends AppCompatActivity {
                 }
             });
 
+    /**
+     * Called when the activity is first created.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle). Otherwise it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_search);
 
-        // --- Initialize UI and Services ---
+        // Initialize UI and Services
         locationInput = findViewById(R.id.location_input);
         keywordInput = findViewById(R.id.keywordInput);
         budgetInput = findViewById(R.id.budgetInput);
@@ -71,7 +80,7 @@ public class CarSearch extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         geocoder = new Geocoder(this, Locale.getDefault());
 
-        // --- Set Click Listeners ---
+        // Set Click Listeners
         manualSearchButton.setOnClickListener(v -> handleManualSearch());
         currentLocationButton.setOnClickListener(v -> checkLocationPermissionAndGetLocation());
         findCarsButton.setOnClickListener(v -> startCarListActivity());
@@ -164,6 +173,7 @@ public class CarSearch extends AppCompatActivity {
 
     /**
      * Uses Geocoder to get an address from a Location object and update the label.
+     * @param location The location to get an address for.
      */
     private void getAddressFromLocation(Location location) {
         try {
